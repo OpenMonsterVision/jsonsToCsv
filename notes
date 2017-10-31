@@ -1,0 +1,2 @@
+function rqc () { awk -F'"' -v OFS='' '{ for (i=2; i<=NF; i+=2) gsub(",", "", $i) } 1' $@ | sed 's/"//g' ;}
+username,user_profile_picture,user_id,full_name,can_delete_comments,code,tags,low_resolution_url,low_resolution_width,low_resolution_hight,thumbnail_url,thumbnail_width,thumbnail_hight,standard_resolution_url,standard_resolution_width,standard_resolution_hight,can_view_comments,comments_count,likes_count,alt_media_url,caption_time,caption_text,caption_from_user,caption_from_profile_picture,caption_from_id,caption_from_full_name,created_time,type,idn,locationn,urls
