@@ -79,7 +79,7 @@ function parseFile (file) {
         var user_id                       = json[i].user.id || '';
         var full_name                     = json[i].user.full_name || '';
         var can_delete_comments           = json[i].can_delete_comments || '';
-        var code                          = json[i].user || '';
+        var code                          = json[i].code || '';
         var tags                          = json[i].tags || '';
         var low_resolution_url            = json[i].images.low_resolution.url || '';
         var low_resolution_width          = json[i].images.low_resolution.width || '';
