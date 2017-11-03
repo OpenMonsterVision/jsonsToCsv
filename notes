@@ -1,2 +1,24 @@
 function rqc () { awk -F'"' -v OFS='' '{ for (i=2; i<=NF; i+=2) gsub(",", "", $i) } 1' $@ | sed 's/"//g' ;}
 username,user_profile_picture,user_id,full_name,can_delete_comments,code,tags,low_resolution_url,low_resolution_width,low_resolution_hight,thumbnail_url,thumbnail_width,thumbnail_hight,standard_resolution_url,standard_resolution_width,standard_resolution_hight,can_view_comments,comments_count,likes_count,alt_media_url,caption_time,caption_text,caption_from_user,caption_from_profile_picture,caption_from_id,caption_from_full_name,created_time,type,idn,locationn,urls
+
+[dusty@xor Instagram]$ time node exp.js . > bolgna
+FATAL ERROR: CALL_AND_RETRY_LAST Allocation failed - JavaScript heap out of memory
+ 1: node::Abort() [node]
+ 2: 0xdc786e [node]
+ 3: v8::Utils::ReportApiFailure(char const*, char const*) [node]
+ 4: v8::internal::V8::FatalProcessOutOfMemory(char const*, bool) [node]
+ 5: v8::internal::Factory::NewRawOneByteString(int, v8::internal::PretenureFlag) [node]
+ 6: v8::internal::JsonParser<true>::ParseJsonValue() [node]
+ 7: v8::internal::JsonParser<true>::ParseJsonObject() [node]
+ 8: v8::internal::JsonParser<true>::ParseJsonValue() [node]
+ 9: v8::internal::JsonParser<true>::ParseJsonArray() [node]
+10: v8::internal::JsonParser<true>::ParseJsonValue() [node]
+11: v8::internal::JsonParser<true>::ParseJson() [node]
+12: v8::internal::Runtime_ParseJson(int, v8::internal::Object**, v8::internal::Isolate*) [node]
+13: 0x1605d4f092a7
+Aborted (core dumped)
+
+real	55m3.628s
+user	48m4.740s
+sys	2m50.228s
+
