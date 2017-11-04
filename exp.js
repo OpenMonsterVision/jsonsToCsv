@@ -1,10 +1,19 @@
 #!/bin/node
-
+const cluster = require('cluster');
 const path  = require('path');
 const fs    = require('fs');
+const numCPUs = require('os').cpus().length;
 
 // node experimental.js instatab14/
 //
+if (cluster.isMaster) {
+      console.log(`Master ${process.pid} is running`);
+
+        // Fork workers.
+           for (let i = 0; i < (numCPUs- 2); i++) {
+               cluster.fork();
+                 }
+} else {
 if (!process.argv[2]) return console.log('\nNO PATH! \nexample: \n\tnode experimental.js path/to/dir\n');
 from('./' + process.argv[2], '.json');
 
@@ -69,102 +78,88 @@ function forceGC(){
 //    json = require(list[n])
 //forceGC();
 //
+//
+function arrayToCSV(objArray) {
+     const array = typeof objArray !== 'object' ? JSON.parse(objArray) : objArray;
+     let str = `${Object.keys(array[0]).map(value => `"${value}"`).join(",")}` + '\r\n';
+
+     return array.reduce((str, next) => {
+         str += `${Object.values(next).map(value => `"${value}"`).join(",")}` + '\r\n';
+         return str;
+        }, str);
+ }
+
 function parseFile (file) {
+    let json = require('./' + file),
+        userAry = json.reduce(function(agg, value) {
+            return agg.concat({
+                username: value.user.username,
+                user_profile_picture: value.user.profile_picture, 
+                user_id: value.user.id,
+                full_name: value.user.full_name,
+                can_delete_comments: value.can_delete_comments,
+                code: value.code,
+                tags: value.tags,
+                low_resolution_url: value.images.low_resolution.url,
+                low_resolution_width: value.images.low_resolution.width,
+                low_resolution_height: value.images.low_resolution.height,
+                thumbnail_url: value.images.thumbnail.url,
+                thumbnail_width: value.images.thumbnail.width,
+                thumbnail_height: value.images.thumbnail.height, 
+                standard_resolution_url: value.images.standard_resolution.url,
+                standard_resolution_width: value.images.standard_resolution.width,
+                standard_resolution_height: value.images.standard_resolution.height,
+                can_view_comments: value.can_view_comments,
+                comments_count: value.comments.count,
+                likes_count: value.likes.count,
+                alt_media_url: value.alt_media_url,
+                caption_time: value.caption ? value.caption.created_time : '',
+                caption_text: value.caption ? value.caption.text : '',
+                caption_from_user: value.caption ? value.caption.from.user : '',
+                caption_from_profile_picture: value.caption ? value.caption.from.profile_picture : '',
+                caption_from_id: value.caption ? value.caption.from.id : '',
+                caption_from_full_name: value.caption ? value.caption.from.full_name : '',
+                created_tiime: value.created_time,
+                type: value.type,
+                idn: value.id,
+                link: value.link,
+                urls: value.urls[0],
+                city: value.location ? value.location.city : '',
+                short_name: value.location ? (value.location.place ? value.location.place.city : '') : '',
+                lat: value.location ? (value.location.place ? value.location.place.lat : '') : '',
+                lng: value.location ? (value.location.place ? value.location.place.lng : '') : '',
+            });
+    }, []);
 
-    // console.log(json)
-    var json = require("./" + file) 
-    for (i = 0; i < json.length; i++) {
-        var username                      = json[i].user.username || '';
-        var user_projson_picture          = json[i].user.projson_picture || '';
-        var user_id                       = json[i].user.id || '';
-        var full_name                     = json[i].user.full_name || '';
-        var can_delete_comments           = json[i].can_delete_comments || '';
-        var code                          = json[i].code || '';
-        var tags                          = json[i].tags || '';
-        var low_resolution_url            = json[i].images.low_resolution.url || '';
-        var low_resolution_width          = json[i].images.low_resolution.width || '';
-        var low_resolution_hight          = json[i].images.low_resolution.height || '';
-        var thumbnail_url                 = json[i].images.thumbnail.url || '';
-        var thumbnail_width               = json[i].images.thumbnail.width || '';
-        var thumbnail_hight               = json[i].images.thumbnail.height || '';
-        var standard_resolution_url       = json[i].images.standard_resolution.url || '';
-        var standard_resolution_width     = json[i].images.standard_resolution.width || '';
-        var standard_resolution_hight     = json[i].images.standard_resolution.height || '';
-        var can_view_comments             = json[i].can_view_comments || '';
-        var chunk_one                     = "\""    + username +
-            "\",\"" + user_projson_picture +
-            "\",\"" + user_id +
-            "\",\"" + full_name +
-            "\",\"" + can_delete_comments +
-            "\",\"" + code +
-            "\",\"" + tags +
-            "\",\"" + low_resolution_url +
-            "\",\"" + low_resolution_width +
-            "\",\"" + low_resolution_hight +
-            "\",\"" + thumbnail_url +
-            "\",\"" + thumbnail_width +
-            "\",\"" + thumbnail_hight +
-            "\",\"" + standard_resolution_url +
-            "\",\"" + standard_resolution_width +
-            "\",\"" + standard_resolution_hight +
-            "\",\"" + can_view_comments + "\"";
-        var comments_count                = json[i].comments.count || '';
-        var likes_count                   = json[i].likes.count || '';
-        var alt_media_url                 = json[i].alt_media_url || '';
-        var caption                       = json[i].caption || {} ;
-        json[i].caption               = caption
-        var caption_time                  = json[i].caption.created_time || '';
-        var from                       = json[i].caption.from || {} ;
-        json[i].caption.from               = from
-        var caption_text                  = json[i].caption.text || '';
-        var caption_from_user             = json[i].caption.from.user || '';
-        var caption_from_projson_picture  = json[i].caption.from.projson_picture || '';
-        var caption_from_id               = json[i].caption.from.id || '';
-        var caption_from_full_name        = json[i].caption.from.full_name || '';
-        var created_time                  = json[i].created_time || '';
-        var type                          = json[i].type || '';
-        var idn                           = json[i].id || '';
-        var urls                          = json[i].urls[0] || '';
-        var link                          = json[i].link || '';
-        var chunk_two                     = ",\""   + comments_count +
-            "\",\"" + likes_count +
-            "\",\"" + alt_media_url +
-            "\",\"" + caption_time +
-            "\",\"" + caption_text +
-            "\",\"" + caption_from_user +
-            "\",\"" + caption_from_projson_picture +
-            "\",\"" + caption_from_id +
-            "\",\"" + caption_from_full_name +
-            "\",\"" + created_time +
-            "\",\"" + type +
-            "\",\"" + idn +
-            "\",\"" + link +
-            "\",\"" + urls + "\"";
+    console.log(arrayToCSV(userAry));
 
+    /*
+        json.reduce(function(aggregate, value) {
+            return {
+                username: value.user.username,
+                user_projson_picture: value.user.projson_picture, 
+                user_id: value.user.id,
+                full_name: value.user.full_name,
+                can_delete_comments: value.can_delete_comments,
+                code: value.code,
+                tags: value.tags,
+                low_resolution_url: value.images.low_resolution_url,
+                low_resolution_width: value.images.low_resolution_width,
+                low_resolution_height: value.images.low_resolution_height,
+                thumbnail_url: value.images.thumbnail_url,
+                thumbnail_width: value.images.thumbnail_width,
+                thumbnail_height: value.images.thumbnail_height, 
+                standard_resolution_url: value.images.standard_resolution_url,
+                standard_resolution_width: value.images.standard_resolution_width,
+                standard_resolution_height: value.images.standard_resolution_height,
+                can_view_comments: value.can_view_comments
+            };
+        });
 
-        var locationn                     = json[i].location || {};
-        json[i].location		  = locationn
-
-        var place			  = locationn.place || {};
-        var ploc			  = place.location || {};
-        var city			  = ploc.city || '' ;
-        var stringLoc			  = JSON.stringify(json[i].location)
-        if(stringLoc == "{}"){
-            continue;
-        }
-        var name			  = ploc.name || '' ;
-        var short_name			  = ploc.short_name || '' ;
-        var lat			  	  = ploc.lat || '' ;
-        var lng			  	  = ploc.lng || '';
-        var chunk_three                     = ",\""   + name +
-            "\",\"" + city +
-            "\",\"" + short_name +
-            "\",\"" + lat +
-            "\",\"" + lng +
-            "\",\"" + stringLoc + "\"";
-
-        console.log(chunk_one + chunk_two + chunk_three)
+        console.log(aggregate);
+        exit();
     }
-
+*/
     serialKilla(file);
+}
 }
