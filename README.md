@@ -1,2 +1,2 @@
 # To Run
-node exp.js [path to scrapes]
+node main.js [path to scrapes]
